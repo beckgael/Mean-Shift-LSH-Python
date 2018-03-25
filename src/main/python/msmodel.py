@@ -1,6 +1,6 @@
 class Mean_shift_lsh_model(object):
 	"""docstring for mean_shift_lsh_model"""
-	def __init__(self,clustersCenter, rdd, maxMinArray):
+	def __init__(self, clustersCenter, rdd, maxMinArray):
 		self.clustersCenter = clustersCenter
 		self.rdd = rdd
 		self.maxMinArray = maxMinArray

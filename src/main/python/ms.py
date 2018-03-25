@@ -13,12 +13,12 @@ class LshHash(object):
     for xx in range(len(tabHash1)):
       sum1 = 0
       for y in range(len(x)):
-        sum1 += x[y]*tabHash1[xx][y]
-      tabHash.append((sum1+b)/w)
+        sum1 += x[y] * tabHash1[xx][y]
+      tabHash.append((sum1 + b) / w)
     return np.sum(tabHash)
 
 class Bary0(object):
-  """docstring for Bary0"""
+  '''Docstring for Bary0'''
   def __init__(self):
     pass
 
@@ -26,7 +26,7 @@ class Bary0(object):
     def f1(obj):
       return list(obj[0])
     def f2(obj):
-      return obj/k
+      return obj / k
 
     def reduceList(l1,l2):
       l3 = []
@@ -66,33 +66,33 @@ class msLsh(object):
   def void():
     pass
 
-  def set_numPart(self,np):
+  def set_numPart(self, np):
     self.numPart = np
     return self
 
-  def set_boolnorm(self,bool1):
+  def set_boolnorm(self, bool1):
     self.normalisation = bool1
     return self
 
-  def set_w(self,ww):
+  def set_w(self, ww):
     self.w = ww
     return self
 
-  def set_nbseg(self,nbseg1):
+  def set_nbseg(self, nbseg1):
     self.nbseg = nbseg1
     return self
 
-  def set_nbblocs(self,bloc1):
+  def set_nbblocs(self, bloc1):
     self.nbblocs = bloc1
     return self
 
-  def set_k(self,kval):
+  def set_k(self, kval):
     self.k = kval
     return self
 
 
-  def set_threshold_cluster(self,threshold_cluster_val):
-    self.threshold_cluster = threshold_cluster_val
+  def set_threshold_cluster(self, thresholdClusterVal):
+    self.threshold_cluster = thresholdClusterVal
     return self
 
 
@@ -138,7 +138,7 @@ class msLsh(object):
     def insideRDD(size11,yy,minArray,maxArray):
       tabcoord = []
       for ind0 in range(size11):
-        coordXi = (yy[1][ind0]-minArray[ind0])/(maxArray[ind0]-minArray[ind0])
+        coordXi = (yy[1][ind0] - minArray[ind0]) / (maxArray[ind0] - minArray[ind0])
         tabcoord.append(coordXi)
       return (yy[0],Vectors.dense(tabcoord))
 
@@ -155,7 +155,7 @@ class msLsh(object):
       minArray.append(min0)
       maxArray.append(max0)
 
-    rdd2 = rdd1.map(lambda y: insideRDD(size1,y,minArray,maxArray))
+    rdd2 = rdd1.map(lambda y: insideRDD(size1, y, minArray, maxArray))
 
     return (rdd2,maxArray,minArray)
 
@@ -180,7 +180,7 @@ class msLsh(object):
     data.cache()
     size = int(data.count())
     dim = 0
-    maxK = int(size/self.nbblocs) - 1
+    maxK = int(size / self.nbblocs) - 1
 
     if (size < self.cmin) : print("Exception : cmin > data size")  
     if (maxK <= self.k) : print("Exception : You set a too high K value")  
@@ -205,7 +205,7 @@ class msLsh(object):
     centroider = sc.broadcast(centroider0)
 
     def f1(obj):
-      return (obj[0],obj[1],obj[1],hasher.value.hashfunc(obj[1],ww.value,b.value,tabHash0.value))
+      return (obj[0], obj[1], obj[1], hasher.value.hashfunc(obj[1],ww.value,b.value,tabHash0.value))
 
     rdd_LSH = data0.map(lambda x: f1(x)).repartition(self.nbblocs)
     rdd_res = sc.emptyRDD
@@ -231,7 +231,7 @@ class msLsh(object):
     def f23(obj):
       return (obj[0],obj[2],obj[1])
 
-    for ind in range(1,self.yStarIter+1):
+    for ind in range(1, self.yStarIter + 1):
       rdd_LSH_ord =  rdd_LSH.sortBy(lambda x: x[3]).mapPartitions(f21)
       if(ind < self.yStarIter):
         rdd_LSH_unpersist = rdd_LSH
@@ -249,13 +249,13 @@ class msLsh(object):
     vector0 = rdd_Ystar_ind.first()[1]
     stop = size
     tab_ind = []
-    rdd0 = sc.parallelize([["9999999",["9999999",Vectors.dense([1]),Vectors.dense([1])]]],1).filter(lambda x:x[0]=="1")
+    rdd0 = sc.parallelize([["9999999",["9999999",Vectors.dense([1]),Vectors.dense([1])]]],1).filter(lambda x: x[0] == "1")
 
     def f21(obj):
       return (str(ind1),obj)
 
-    def filter1(obj,vector,threshold):
-      return obj[1].squared_distance(vector) <= threshold
+    def isDistanceLessThanThreshold(obj1, vector2, threshold):
+      return obj1[1].squared_distance(vector2) <= threshold
 
     def printl(obj):
       print(obj)
@@ -263,7 +263,7 @@ class msLsh(object):
     while ( stop != 0 ):
       
       # We mesure distance from Y* to others et we keep closest
-      rdd_Clust_i_ind = rdd_Ystar_ind.filter( lambda x : filter1(x,vector0,self.threshold_cluster) ).cache()
+      rdd_Clust_i_ind = rdd_Ystar_ind.filter( lambda x: isDistanceLessThanThreshold(x, vector0, self.threshold_cluster) ).cache()
 
       rdd_Clust_i2_ind = rdd_Clust_i_ind.map(f21)
 
@@ -363,12 +363,12 @@ class msLsh(object):
           print "cardinality"
           print list(map(lambda x:x[3],tabproche0))
           cpt3 = 1
-          while tabproche0[cpt3][2]==labelcurrent: cpt3 += 1
+          while tabproche0[cpt3][2] == labelcurrent: cpt3 += 1
           plusproche = tabproche0[cpt3]
           labelplusproche = plusproche[2]
           sizeplusproche = plusproche[3]
-          tab00 = list(filter(lambda x: x[1]==labelplusproche,tabbar01))
-          tab01 = list(filter(lambda x: x[1]==labelcurrent,tabbar01))
+          tab00 = list(filter(lambda x: x[1] == labelplusproche,tabbar01))
+          tab01 = list(filter(lambda x: x[1] == labelcurrent,tabbar01))
           tabind0 = []
           #Update
           for ind8 in range(len(tab00)):
@@ -415,13 +415,13 @@ class msLsh(object):
   '''
    Restore RDD original value
   '''
-  def descaleRDD(self,rdd1,maxMinArray0) :
+  def descaleRDD(self, rdd1, maxMinArray0) :
     vecttest = rdd1.first()[1][1]
     size1 = len(vecttest)
     maxArray = maxMinArray0[0]
     minArray = maxMinArray0[1]
 
-    def f1(obj,maxArray,minArray):
+    def f1(obj, maxArray, minArray):
       tabcoord = []
       for x in range(size1):
         coordXi = x[1][1][ind0]*(maxArray[ind0]-minArray[ind0])+minArray[ind0]
@@ -433,7 +433,7 @@ class msLsh(object):
 
 
 
-  def saveImageAnalysis(self, msmodel, folder,numpart=1) :
+  def saveImageAnalysis(self, msmodel, folder, numpart = 1) :
     rdd_final = self.descaleRDD(msmodel.rdd, msmodel.maxMinArray).map(lambda x:(int(x[1]),msmodel.clustersCenter[x[0]],x[0]))
     rdd_final.coalesce(numpart,true).sortBy(lambda x: x[0]).saveAsTextFile(folder)  
   
